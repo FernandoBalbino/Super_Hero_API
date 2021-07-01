@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	
+	<title>Document</title>
+	<style>
+
+		input[type='text']#texto{
+			display: inline-block;
+			margin: 5px auto;
+		}
+		div#info{
+			flex-direction: column;
+			align-items: center;
+			text-align: justify;
+		}
+		#btn{
+			margin: 20px auto;
+			display: block;
+		}
+		h1{
+			text-transform: uppercase;
+		}
+		img{
+			    vertical-align: middle;
+			    border-radius: 10px;
+		}
+	</style>
+</head>
+<body>
+
+	
+
+	<div id="container" class="container-fluid h-100">
+		<input id="texto" placeholder="Digite o nome do héroi em inglês"  type="text" class="form-control w-100" name="">
+	<button id="btn"  onclick="reqHeroi()" class="btn btn-primary" type="button">Verificar</button>
+		<div id="global" class="row h-100 justify-content-center align-items-center">
+			<div id="img" class="col-md-6 d-block h-100 align-items-center d-flex align-content-center">
+				
+			</div>
+			<div id="info" class="h-100 d-flex col-md-6 d-block ">
+				
+			</div>
+		</div>
+	</div>
+
+	<script>
+
+		
+		function primeiraLetraMaiuscula(string) {
+ 			 return string.charAt(0).toUpperCase() + string.slice(1);
+		}
+
+		let img_hero;
+		let raça_hero;
+		let name_hero;
+		let full_hero;
+		let genero_hero;
+		let texto = document.querySelector('#texto');
+		
+
+
+
+		let ajax = new XMLHttpRequest();
+		function reqHeroi () {
+
+			document.querySelector('#img').innerHTML=''
+				document.querySelector('#info').innerHTML=''
+
+			let loading = document.createElement('img');
+			loading.src='loading.svg'
+			loading.className='d-block mx-auto'
+			document.getElementById('container').appendChild(loading)
+			ajax.open('GET', 'https://superheroapi.com/api/1178709309303507/search/'+primeiraLetraMaiuscula(texto.value))
+			ajax.responseType = 'json';
+			console.log(ajax.readyState)
+			ajax.onreadystatechange = () =>{
+				if(ajax.readyState == 4 && ajax.status == 200){
+
+
+
+				for(var c = 0; c < ajax.response.results.length;c++){
+
+					if(ajax.response.results[c].name==texto.value){
+					img_hero = ajax.response.results[c].image.url;
+					name_hero = ajax.response.results[c].name;
+					genero_hero = ajax.response.results[c].appearance.gender
+					raça_hero = ajax.response.results[c].appearance.race
+					full_hero = ajax.response.results[c].biography["full-name"]
+					}
+				}
+				if(genero_hero == 'Male'){
+					genero_hero = 'Masculino'
+				} else{
+					genero_hero = 'Feminino'
+				}
+				
+				loading.remove()
+				let nome = document.createElement('h1')
+				let genero = document.createElement('p')
+				let nome_completo = document.createElement('p')
+				let raça = document.createElement('p')
+				let br = document.createElement('br')
+				genero.className='lead'
+				genero.innerHTML= '<strong>Genêro: </strong>'+genero_hero;
+				raça.className='lead'
+				raça.innerHTML= '<strong>Raça: </strong>'+raça_hero;
+
+				nome_completo.className='lead'
+				nome_completo.innerHTML= '<strong>Nome completo: </strong>'+full_hero;
+
+				nome.className='display-4'
+				nome.innerText= name_hero;
+				
+				let img = document.createElement('img')
+				img.src = img_hero;
+				img.className = 'img-fluid mx-auto text-center'
+				
+				
+				document.querySelector('#img').appendChild(img)
+				document.querySelector('#info').appendChild(nome)
+				document.querySelector('#info').appendChild(genero)
+				document.querySelector('#info').appendChild(raça)
+				document.querySelector('#info').appendChild(nome_completo)
+				} else{
+					
+				
+				loading.remove()
+
+				}
+			}
+
+
+
+
+			ajax.send();
+		}
+	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
+
